@@ -1,0 +1,4 @@
+<launch>
+  <node name="avoid_node" pkg="my_nodes" type="avoider_node.py" output="screen"/>
+  <node name="talker_node" pkg="my_nodes" type="talker.py" output="screen"/>
+</launch>

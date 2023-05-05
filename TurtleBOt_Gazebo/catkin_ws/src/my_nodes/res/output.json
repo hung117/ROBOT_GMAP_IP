@@ -1,0 +1,23 @@
+{
+    "levelName": "2Chickens",
+    "differences": [
+        {
+            "coor": [
+                {
+                    "x": 303,
+                    "y": 364
+                }
+            ],
+            "radius": 8
+        },
+        {
+            "coor": [
+                {
+                    "x": 413,
+                    "y": 288
+                }
+            ],
+            "radius": 17
+        }
+    ]
+}
