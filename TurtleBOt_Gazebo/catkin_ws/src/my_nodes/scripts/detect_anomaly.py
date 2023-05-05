@@ -1,14 +1,13 @@
-import rospy
-from std_msgs.msg import String
-import roslaunch
-
 import matplotlib.pyplot as plt
+import os
 
 from skimage.metrics import structural_similarity as SIMM
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
-import os
+import json
+
+
 def getMapEdge(img,showFeatures = False):
     gray = img[:,:,0]
 
@@ -246,7 +245,7 @@ def getRegionMap(image1,image2,b_display = False):
 
     
     return [mask,maskedImage1]
-def printDifferences(img1,img2,FigName="Differences"):
+def printDifferences(img1,img2,bShowPlots = False,FigName="Differences"):
     b_haveAnomaly = False
     # get image copy for display purpose
     og1 = img1.copy()
@@ -273,7 +272,7 @@ def printDifferences(img1,img2,FigName="Differences"):
     mask = np.zeros(img1.shape, dtype='uint8')
     # mask = (255-thresh)
     mask = diff < 10
-    contourImg = img2.copy()
+    contourImg = img1.copy()
 
     binary_img = mask
     binary_img.dtype='uint8' # convert binary_img in type of true false to decimal 0-1 array
@@ -284,7 +283,7 @@ def printDifferences(img1,img2,FigName="Differences"):
     if len(contours) == 0:
         print("cant find contours")
         quit()
-    print(len(contours))
+    print("contours len: " + str(len(contours)))
     
     # Get datas from contours
 
@@ -315,48 +314,50 @@ def printDifferences(img1,img2,FigName="Differences"):
     contourImg = cv2.cvtColor(contourImg, cv2.COLOR_BGR2RGB)
 
     ## show plot
-    fig = plt.figure()
+    if(bShowPlots):
+        fig = plt.figure()
 
-    ax0 = fig.add_subplot(2,3,1)
-    ax0.imshow(og1)
-    ax0.title.set_text('img1')
+        ax0 = fig.add_subplot(2,3,1)
+        ax0.imshow(og1)
+        ax0.title.set_text('img1')
 
-    ax1 = fig.add_subplot(2,3,2)
-    ax1.imshow(og2)
-    ax1.title.set_text('img2')
+        ax1 = fig.add_subplot(2,3,2)
+        ax1.imshow(og2)
+        ax1.title.set_text('img2')
 
-    ax2 = fig.add_subplot(2,3,3)
-    ax2.imshow(diff,cmap="gray")
-    ax2.title.set_text('diff')
+        ax2 = fig.add_subplot(2,3,3)
+        ax2.imshow(diff,cmap="gray")
+        ax2.title.set_text('diff')
 
-    ax3 = fig.add_subplot(2,3,4)
-    ax3.imshow(mask,cmap='gray')
-    ax3.title.set_text('mask')
+        ax3 = fig.add_subplot(2,3,4)
+        ax3.imshow(mask,cmap='gray')
+        ax3.title.set_text('mask')
 
 
-    ax4 = fig.add_subplot(2,3,5)
-    ax4.imshow(diff_box,cmap="gray")
-    ax4.title.set_text('diff_box')
+        ax4 = fig.add_subplot(2,3,5)
+        ax4.imshow(diff_box,cmap="gray")
+        ax4.title.set_text('diff_box')
 
-    ax5 = fig.add_subplot(2,3,6)
-    ax5.imshow(contourImg)
-    ax5.title.set_text('contourImg')
+        ax5 = fig.add_subplot(2,3,6)
+        ax5.imshow(contourImg)
+        ax5.title.set_text('contourImg')
 
-    fig.suptitle(FigName, fontsize=16)
-    return b_haveAnomaly
+        fig.suptitle(FigName, fontsize=16)
+    return [b_haveAnomaly,contourImg]
 
 
 def compare():
     # # GET IMAGE
-    imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/map.pgm'
+    # imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/og_map.pgm'
+    imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/anomaly_map.pgm'
+
     if not os.path.exists(imgs_path):
         print ('The Img1 File you trying to read does not exist')
         return False
     with open(imgs_path, 'r') as src:
         image1 = cv2.imread(imgs_path)
     
-    imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/map2.pgm'
-    # imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/map_tmp.pgm.pgm'
+    imgs_path = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/res/map_tmp.pgm'
     if not os.path.exists(imgs_path):
         print ('The Img2 File you trying to read does not exist')
         return False
@@ -367,32 +368,39 @@ def compare():
 
     # # MAIN ========================
 
-    # #  $ GET & APPLY MASK
+    # # GET & APPLY MASK
     mask = getRegionMap(image1,image2,False)[0]
 
     mask.dtype='uint8' # convert binary_img in type of true false to decimal array
     mask = np.array(mask*255,dtype=np.uint8) # c
-    mask = getMapEdge(mask,True)[2]
+    mask = getMapEdge(mask)[2]
 
     image1 = (image1 * mask).clip(0, 255).astype(np.uint8)
     image2 = (image2 * mask).clip(0, 255).astype(np.uint8)
-    #DISPLAY
-    fig = plt.figure()
-    ax3 = fig.add_subplot(2,2,1)
-    ax3.imshow(image1,cmap='gray')
-    ax3.title.set_text('map1')
 
-    ax3 = fig.add_subplot(2,2,2)
-    ax3.imshow(image2)
-    ax3.title.set_text('map2')
+    b_gotAnomaly,detectionImage = printDifferences(image1,image2)
+    print("b_gotAnomaly: " + str(b_gotAnomaly))
 
-    ax3 = fig.add_subplot(2,2,3)
-    ax3.imshow(mask)
-    ax3.title.set_text('mask')
+    # SAVE OUTPUT 
+    # # IMAGE -- Set the directory for saving the image
+    directory = r'/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/output/'
+    # Change the working directory to the specified directory for saving the image
+    os.chdir(directory) 
+    print("Before saving")   
+    print(os.listdir(directory))   
+    # Save the image with the filename
+    filename = 'difference_map.png'
+    cv2.imwrite(filename, detectionImage) 
+    # Print the list of files in the directory after saving the image
+    print("After saving")  
+    print(os.listdir(directory))
+    # # JSON -- Push the "b_gotAnomaly" into output/Detection.json
+    json_content = {"bDetect": b_gotAnomaly}
 
-        # Check out the differences!
-    b_detected = printDifferences(image1,image2) 
-    return b_detected
+    jsonString = json.dumps(json_content)
+    jsonFile = open("/home/james/Documents/Programming/Robot/TurtleBOt_Gazebo/catkin_ws/src/my_nodes/output/Detection.json", "w")
+    jsonFile.write(jsonString)
+    jsonFile.close()
 
 def ROSmain():
     # Initialize our node
@@ -407,19 +415,11 @@ def ROSmain():
         # Check out the differences!
         b_detected = printDifferences(img1,img2) 
         pub.publish(b_detected)
-        rospy.loginfo("Detected Annomaly:" + str(b_detected))
         rate.sleep()
 
 if __name__ == "__main__":
-    try:
-        # main()
-        # print(compare())
-        
-        rospy.init_node('talker', anonymous=True)
-        pub = rospy.Publisher('chatter', String, queue_size=10)
-        pub.publish(str(compare()))
-        
-        print("ANOMALY?????????????????==================="+str(compare()) + "\n")
+    try:      
+        compare()
     except rospy.ROSInterruptException:
         pass
 
