@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-simpleupload@1.1.0/simpleUpload.min.js"></script>
+  </head>
+  <body>
+    <h3>
+      Using the <i>jQuery simple upload</i> plugin to upload the file without
+      using the form
+    </h3>
+    <input type="file" name="file" id="file_input" />
+
+    <button type="button" id="getdata_button">Get data!</button>
+    <div id="content"></div>
+    <script>
+      $("#file_input").change(function () {
+        $(this).simpleUpload("abcd.php", {
+          start: function (file) {
+            //upload started
+            content.innerHTML = "upload started";
+          },
+        });
+      });
+
+      const getdata_button = document.getElementById("getdata_button");
+      if (!getdata_button) console.error("can't get button");
+
+      getdata_button.addEventListener("click", function () {
+        getdata_button.innerHTML = "Hello World";
+        getdata_button.onclick = function () {
+          function myFunction() {
+            fetch("http://localhost:3000/robotData")
+              .then((res) => {
+                return res.text();
+              })
+              .then((text) => {
+                alert(text);
+              });
+          }
+        };
+      });
+
+      export const fakeGETConnect = () => {
+        return fetch("http://localhost:3000", {
+          method: "GET",
+        }).then((response) => {
+          console.log(response);
+        });
+      };
+    </script>
+  </body>
+</html>

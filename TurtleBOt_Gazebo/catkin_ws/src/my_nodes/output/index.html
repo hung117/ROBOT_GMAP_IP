@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Patrol Robot</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+	<div class="pageContainer">
+		<div class="navBar">
+			Patrol Robot
+		</div>
+		<div style="display: flex; justify-content: center; align-items: center;">
+			<div class="imageContainer">
+				<img class="differenceImage" src="./difference_map.png"/>
+			</div>
+		</div>
+		<div style="display: flex; justify-content: center; align-items: center; margin-top: 40px;">
+			<div class="warningText">Anomaly Found!!</div>
+		</div>
+	</div>
+	<script>
+		const getDetection = async () => {
+			return await $.getJSON("./Detection.json", data => {
+				return data
+			})
+		}
+		getDetection().then(data => {
+			if(data.bDetect === true) {
+				$(".imageContainer").css("border", "solid 1px red")
+				$(".warningText").css("color", "red")
+				$(".warningText").html("Anomaly Found!!")
+			} else {
+				$(".imageContainer").css("border", "solid 1px darkgreen")
+				$(".warningText").css("color", "darkgreen")
+				$(".warningText").html("No Anomaly")
+			}
+		})
+	</script>
+</body>
+</html>
