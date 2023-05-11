@@ -36,13 +36,19 @@
           <img src="./img/avoider.png" width="300"/> <br>
 
       - Detection: Image Process-based<br>
+
         - First version
           <img src="./img/map_Diff.png" width="300"/> <br>
           have 2 map: og and tmp, compare the tmp with the og, if there're any difference, send warning
+
           - Draw the first map intentionally via tele operation (teleop)
-          - Then let the bot strolling around, when it finishs it's routes, check the 2 maps
+          - Then let the bot strolling around, when it finishs it's routes, check the 2 maps <br>
+            return:
+            <br> <img src="./img/output.png" width="300"/> <br>
+
             - problems:
               At the current state, this process requires the robot to complete the whole route before the checking-step takes place. This however is a very problematic way to do things. For example if an intruder broke into the house in which the robot guards, by the time the robot finishes the routes and send alert to the user, the burglar may have been long gone.
+
         - Current version:
           Set interval and compare only the currently scanned region with that region of ogImage. <br>
           <br> <img src="./img/masking_region.png" width="300"/> <br>
@@ -53,11 +59,16 @@
           Total nodes run:
           <br> <img src="./img/topic_nodes.png" width="300"/> <br>
 
+- End_user: simple web_app
+  a simple HMI application allows user to monitor the robot via an web_app
+  <br> <img src="./img/anomaly_none.png" width="300"/> <br>
+  <br> <img src="./img/anomaly_detected.png" width="300"/> <br>
+
 - Achived
   A robot with the ability to detect anomaly and navigate autonomously
   - Development & Improvment
     - Compare to mine
     - Compare to other's
-- Obstacle
-- FuturePlan
-  -
+- Obstacle & Problem
+  when testing IRL I realise if something as big as a chair move, it would detect as anomaly, hence it's not as accurate
+- ## FuturePlan
