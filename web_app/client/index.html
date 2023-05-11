@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patrol Robot</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="pageContainer">
+      <div class="navBar">Patrol Robot</div>
+      <div style="display: flex; justify-content: center; align-items: center">
+        <div class="imageContainer">
+          <img class="differenceImage" src="#" />
+        </div>
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 40px;
+        "
+      >
+        <div class="warningText">Anomaly Found!!</div>
+      </div>
+    </div>
+    <script>
+      const updateApp = () => {
+        $.ajax({
+          url: "http://localhost:3000/robotData", //insert endpoint link here
+          method: "GET",
+          async: false,
+          cache: false,
+          success: function (response) {
+            // Do something with the response here
+            console.log(response);
+            //console log should get {bDetect: true, image: "blabla"}
+            $(".differenceImage").attr(
+              "src",
+              `data:image/png;base64, ${response.image}`
+            );
+            if (response.bDetect === true) {
+              $(".imageContainer").css("border", "solid 1px red");
+              $(".warningText").css("color", "red");
+              $(".warningText").html("Anomaly Found!!");
+            } else {
+              $(".imageContainer").css("border", "solid 1px darkgreen");
+              $(".warningText").css("color", "darkgreen");
+              $(".warningText").html("No Anomaly");
+            }
+          },
+          error: function (xhr, status, error) {
+            // Handle errors here
+            console.log(error);
+          },
+        });
+      };
+      updateApp();
+      setInterval(() => {
+        updateApp();
+      }, 500000);
+    </script>
+  </body>
+</html>

@@ -3,6 +3,9 @@ const fileUpload = require("express-fileupload");
 const app = express();
 const port = 3000;
 
+const cors = require("cors");
+app.use(cors());
+
 const fs = require("fs");
 const dir = "./upload";
 const cron = require("node-cron");
@@ -68,7 +71,6 @@ function getData_wait() {
 async function getData() {
   console.log("== START==");
   const data = await getData_wait();
-  // console.log(data);
   return data;
 }
 
@@ -135,11 +137,11 @@ function validateImage(file) {
 
 // Schedule tasks to be run on the server.
 // cron.schedule("* * * * *", function () {
-// cron.schedule("*/10 * * * * ", function () {
-// EVERY 10 MIN
-// cron.schedule("*/10 * * * * *", function () {
-// // every 10 seconds
-cron.schedule("*/5 * * * * *", function () {
+cron.schedule("*/10 * * * * ", function () {
+  // EVERY 10 MIN
+  // cron.schedule("*/10 * * * * *", function () {
+  // // every 10 seconds
+  // cron.schedule("*/5 * * * * *", function () {
   // every 5 seconds
   // load_outputData();
   console.log("running a task every 10s");

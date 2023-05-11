@@ -1,0 +1,40 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Helvetica;
+	background-color: rgb(19, 19, 19);
+	display: flex;
+	justify-content: center;
+}
+.pageContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: 100vw;
+}
+.differenceImage {
+	border-radius: 16px;
+	height: 320px;
+	width: 320px;
+}
+
+.imageContainer {
+	padding: 8px;
+	border: solid 1px darkgreen;
+	border-radius: 16px;
+}
+
+.warningText {
+	font-size: 2rem;
+	color: red;
+}
+
+.navBar {
+	height: 64px;
+	display: flex;
+	background-color: rgb(7, 7, 7);
+	justify-content: center;
+	align-items: center;
+	color: lightgray;
+	font-size: 1.5rem;
+}
