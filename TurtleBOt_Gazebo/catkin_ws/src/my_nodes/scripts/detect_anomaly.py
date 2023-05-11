@@ -44,7 +44,9 @@ def getMapEdge(img,showFeatures = False):
     edge_gray_sharp = cv2.Canny(sharp_image, 200, 255)
 
     # Find Contour
-    contours, hierarchy = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+#     contours, hierarchy = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
     contourImg = cv2.bitwise_and(img, img, mask=binMask)
     ## approximate contour
 
